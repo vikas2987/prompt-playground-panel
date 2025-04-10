@@ -76,7 +76,7 @@ const Playground = () => {
         <div className="grid lg:grid-cols-2 gap-6 mb-6">
           <div className="panel h-[400px]">
             <PanelHeader 
-              title="Jinja Template" 
+              title="Prompt Template" 
               icon={<FileText size={16} />} 
               onCopy={() => template}
             />

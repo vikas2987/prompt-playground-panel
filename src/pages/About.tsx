@@ -24,7 +24,7 @@ const About = () => {
           <div className="panel-header">
             <h2 className="text-xl font-semibold flex items-center gap-2">
               <Code size={20} />
-              Jinja Template Syntax
+              Prompt Template Syntax
             </h2>
           </div>
           <div className="p-6">
@@ -71,7 +71,7 @@ const About = () => {
           </div>
           <div className="p-6">
             <p className="mb-4">
-              Your JSON data will be passed to the Jinja template. Here's a sample structure:
+              Your JSON data will be passed to the prompt template. Here's a sample structure:
             </p>
             <div className="p-4 bg-muted rounded-md">
               <pre className="font-mono text-sm">

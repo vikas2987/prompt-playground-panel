@@ -30,9 +30,9 @@ const Index = () => {
         </div>
         
         <div className="mt-12 p-6 bg-muted/30 rounded-lg border border-border">
-          <h2 className="font-semibold text-lg mb-3">How to use Jinja Forge Studio</h2>
+          <h2 className="font-semibold text-lg mb-3">How to use Paytm Prompt Playground</h2>
           <ol className="text-left space-y-2 list-decimal list-inside">
-            <li>Paste your Jinja template in the left editor</li>
+            <li>Paste your prompt template in the left editor</li>
             <li>Enter your JSON data in the right editor</li>
             <li>View the rendered result in real-time below</li>
             <li>Copy the rendered output with a single click</li>
