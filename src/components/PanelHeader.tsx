@@ -41,6 +41,7 @@ const PanelHeader = ({ title, icon, onCopy, actions }: PanelHeaderProps) => {
       </div>
       
       <div className="flex items-center gap-2">
+        {actions}
         {onCopy && (
           <Button 
             variant="ghost" 
@@ -55,7 +56,6 @@ const PanelHeader = ({ title, icon, onCopy, actions }: PanelHeaderProps) => {
             )}
           </Button>
         )}
-        {actions}
       </div>
     </div>
   );

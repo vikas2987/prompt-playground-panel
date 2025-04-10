@@ -6,6 +6,7 @@ import PanelHeader from "@/components/PanelHeader";
 import OutputPanel from "@/components/OutputPanel";
 import { renderTemplate, validateJSON } from "@/utils/template";
 import Header from "@/components/Header";
+import PromptLibrary from "@/components/PromptLibrary";
 
 const DEFAULT_TEMPLATE = `# Hello {{ user.name }}!
 
@@ -68,6 +69,11 @@ const Playground = () => {
     }
   }, [template, jsonInput]);
 
+  // Function to handle selecting a prompt from the library
+  const handleSelectPrompt = (promptContent: string) => {
+    setTemplate(promptContent);
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -79,6 +85,12 @@ const Playground = () => {
               title="Prompt Template" 
               icon={<FileText size={16} />} 
               onCopy={() => template}
+              actions={
+                <PromptLibrary 
+                  onSelectPrompt={handleSelectPrompt}
+                  currentTemplate={template}
+                />
+              }
             />
             <Editor 
               language="handlebars" 
