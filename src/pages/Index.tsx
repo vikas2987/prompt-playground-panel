@@ -12,7 +12,7 @@ const Index = () => {
         </div>
         
         <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-          Jinja Forge Studio
+          Paytm Prompt Playground
         </h1>
         
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">

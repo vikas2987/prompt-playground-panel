@@ -13,7 +13,7 @@ const Header = () => {
         <div className="flex items-center gap-2">
           <Link to="/" className="flex items-center gap-2 font-semibold">
             <Code size={20} className="text-primary" />
-            <span>Jinja Forge Studio</span>
+            <span>Paytm Prompt Playground</span>
           </Link>
         </div>
         
