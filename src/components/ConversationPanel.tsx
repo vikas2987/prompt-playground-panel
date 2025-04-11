@@ -55,7 +55,7 @@ const ConversationPanel = ({ onSendMessage, messages, isLoading }: ConversationP
                     <Bot size={18} />
                   )}
                 </div>
-                <div>{message.content}</div>
+                <div className="whitespace-pre-wrap">{message.content}</div>
               </div>
             </div>
           ))

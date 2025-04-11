@@ -83,6 +83,19 @@ const Playground = () => {
     setTemplate(promptContent);
   };
 
+  // New function to fetch LLM data
+  const fetchLlmData = async (prompt: string): Promise<string> => {
+    // This would normally be an API call to an LLM
+    // For now, we'll just simulate a response
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        // Generate a response based on the prompt
+        const response = `I've analyzed your prompt: "${prompt.substring(0, 50)}${prompt.length > 50 ? '...' : ''}"\n\nHere's my response based on your template content.`;
+        resolve(response);
+      }, 1500); // Simulate network delay
+    });
+  };
+
   const handleSendMessage = async (content: string) => {
     const userMessage: Message = { role: 'user', content };
     setMessages([...messages, userMessage]);
@@ -90,15 +103,21 @@ const Playground = () => {
     setIsLoading(true);
     
     try {
-      const staticResponse = "Welcome to Prompt Playground, Explore and test your prompt";
+      // Use the rendered output as the prompt for the LLM
+      const llmResponse = await fetchLlmData(renderedOutput);
       
       setTimeout(() => {
-        const assistantMessage: Message = { role: 'assistant', content: staticResponse };
+        const assistantMessage: Message = { role: 'assistant', content: llmResponse };
         setMessages(prevMessages => [...prevMessages, assistantMessage]);
         setIsLoading(false);
-      }, 1000);
+      }, 500);
     } catch (error) {
       console.error('Error getting response:', error);
+      const errorMessage: Message = { 
+        role: 'assistant', 
+        content: 'Sorry, I encountered an error processing your request.' 
+      };
+      setMessages(prevMessages => [...prevMessages, errorMessage]);
       setIsLoading(false);
     }
   };
