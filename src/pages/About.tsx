@@ -13,9 +13,9 @@ const About = () => {
             <span>Back to Home</span>
           </Link>
         </Button>
-        <h1 className="text-3xl font-bold tracking-tight mb-4">About Paytm Prompt Playground</h1>
+        <h1 className="text-3xl font-bold tracking-tight mb-4">About Prompt Playground</h1>
         <p className="text-muted-foreground text-lg">
-          Learn how to effectively use Paytm Prompt Playground to test and preview your AI prompts
+          Learn how to effectively use Prompt Playground to test and preview your AI prompts
         </p>
       </div>
 

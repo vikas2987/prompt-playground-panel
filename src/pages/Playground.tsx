@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { FileJson, FileText, Trash2 } from "lucide-react";
 import Editor from "@/components/Editor";
@@ -89,7 +90,7 @@ const Playground = () => {
     setIsLoading(true);
     
     try {
-      const staticResponse = "Welcome to Paytm Prompt, Explore and test your prompt";
+      const staticResponse = "Welcome to Prompt Playground, Explore and test your prompt";
       
       setTimeout(() => {
         const assistantMessage: Message = { role: 'assistant', content: staticResponse };
