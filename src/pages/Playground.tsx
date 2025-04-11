@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { FileJson, FileText, Trash2 } from "lucide-react";
 import Editor from "@/components/Editor";
@@ -79,47 +78,30 @@ const Playground = () => {
     }
   }, [template, jsonInput]);
 
-  // Function to handle selecting a prompt from the library
   const handleSelectPrompt = (promptContent: string) => {
     setTemplate(promptContent);
   };
 
-  // Function to simulate an AI response
-  const simulateResponse = (userMessage: string) => {
-    // This would be replaced with a real API call
-    return new Promise<string>((resolve) => {
-      setTimeout(() => {
-        // Generate a simple response based on the rendered output
-        const response = `I've processed your request: "${userMessage}"\n\nBased on the template, here's my response:\n${renderedOutput}`;
-        resolve(response);
-      }, 1500);
-    });
-  };
-
-  // Handle sending a message in the conversation
   const handleSendMessage = async (content: string) => {
-    // Add user message
     const userMessage: Message = { role: 'user', content };
     setMessages([...messages, userMessage]);
     
-    // Simulate loading state
     setIsLoading(true);
     
     try {
-      // Get AI response
-      const aiResponse = await simulateResponse(content);
+      const staticResponse = "Welcome to Paytm Prompt, Explore and test your prompt";
       
-      // Add AI message
-      const assistantMessage: Message = { role: 'assistant', content: aiResponse };
-      setMessages(prevMessages => [...prevMessages, assistantMessage]);
+      setTimeout(() => {
+        const assistantMessage: Message = { role: 'assistant', content: staticResponse };
+        setMessages(prevMessages => [...prevMessages, assistantMessage]);
+        setIsLoading(false);
+      }, 1000);
     } catch (error) {
       console.error('Error getting response:', error);
-    } finally {
       setIsLoading(false);
     }
   };
 
-  // Clear functions for each pane
   const clearTemplate = () => {
     setTemplate("");
     toast({
