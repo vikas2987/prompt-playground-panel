@@ -17,7 +17,9 @@ export const sendMessage = async (
   setIsLoading: (isLoading: boolean) => void
 ) => {
   const userMessage: Message = { role: 'user', content };
-  setMessages([...messages, userMessage]);
+  // Update messages with the user's message
+  const updatedMessages = [...messages, userMessage];
+  setMessages(updatedMessages);
   
   setIsLoading(true);
   
@@ -26,8 +28,11 @@ export const sendMessage = async (
     const llmResponse = await fetchLlmData(renderedOutput);
     
     setTimeout(() => {
+      // Create the assistant's response message
       const assistantMessage: Message = { role: 'assistant', content: llmResponse };
-      setMessages(prevMessages => [...prevMessages, assistantMessage]);
+      // Update messages with both the user's message and the assistant's response
+      const finalMessages = [...updatedMessages, assistantMessage];
+      setMessages(finalMessages);
       setIsLoading(false);
     }, 500);
   } catch (error) {
@@ -36,7 +41,9 @@ export const sendMessage = async (
       role: 'assistant', 
       content: 'Sorry, I encountered an error processing your request.' 
     };
-    setMessages(prevMessages => [...prevMessages, errorMessage]);
+    // Update messages with both the user's message and the error message
+    const errorMessages = [...updatedMessages, errorMessage];
+    setMessages(errorMessages);
     setIsLoading(false);
   }
 };
