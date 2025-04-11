@@ -1,12 +1,14 @@
 
 import { useState, useEffect } from "react";
-import { FileJson, FileText } from "lucide-react";
+import { FileJson, FileText, Trash2 } from "lucide-react";
 import Editor from "@/components/Editor";
 import PanelHeader from "@/components/PanelHeader";
 import OutputPanel from "@/components/OutputPanel";
 import { renderTemplate, validateJSON } from "@/utils/template";
 import Header from "@/components/Header";
 import PromptLibrary from "@/components/PromptLibrary";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 interface Message {
   role: 'user' | 'assistant';
@@ -54,6 +56,7 @@ const Playground = () => {
   const [jsonError, setJsonError] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     try {
@@ -116,11 +119,54 @@ const Playground = () => {
     }
   };
 
+  // Clear functions for each pane
+  const clearTemplate = () => {
+    setTemplate("");
+    toast({
+      description: "Template cleared",
+    });
+  };
+
+  const clearJsonInput = () => {
+    setJsonInput("");
+    toast({
+      description: "JSON input cleared",
+    });
+  };
+
+  const clearOutput = () => {
+    setMessages([]);
+    toast({
+      description: "Output and conversation cleared",
+    });
+  };
+
+  const clearAll = () => {
+    setTemplate("");
+    setJsonInput("");
+    setMessages([]);
+    setRenderedOutput("");
+    toast({
+      description: "All content cleared",
+    });
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
       
       <main className="flex-1 container py-6">
+        <div className="flex justify-end mb-2">
+          <Button 
+            variant="outline"
+            className="flex items-center gap-2"
+            onClick={clearAll}
+          >
+            <Trash2 size={16} />
+            Clear All
+          </Button>
+        </div>
+        
         <div className="grid lg:grid-cols-2 gap-6 mb-6">
           <div className="panel h-[400px]">
             <PanelHeader 
@@ -128,10 +174,20 @@ const Playground = () => {
               icon={<FileText size={16} />} 
               onCopy={() => template}
               actions={
-                <PromptLibrary 
-                  onSelectPrompt={handleSelectPrompt}
-                  currentTemplate={template}
-                />
+                <div className="flex items-center gap-2">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    onClick={clearTemplate}
+                    title="Clear template"
+                  >
+                    <Trash2 size={16} />
+                  </Button>
+                  <PromptLibrary 
+                    onSelectPrompt={handleSelectPrompt}
+                    currentTemplate={template}
+                  />
+                </div>
               }
             />
             <Editor 
@@ -146,6 +202,16 @@ const Playground = () => {
               title="JSON Input" 
               icon={<FileJson size={16} />}
               onCopy={() => jsonInput}
+              actions={
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={clearJsonInput}
+                  title="Clear JSON input"
+                >
+                  <Trash2 size={16} />
+                </Button>
+              }
             />
             <Editor 
               language="json" 
@@ -161,6 +227,7 @@ const Playground = () => {
           messages={messages}
           onSendMessage={handleSendMessage}
           isLoading={isLoading}
+          onClear={clearOutput}
         />
       </main>
     </div>

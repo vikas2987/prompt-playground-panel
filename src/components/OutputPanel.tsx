@@ -1,8 +1,9 @@
 
-import { MessageSquare, FileText, AlertCircle } from 'lucide-react';
+import { MessageSquare, FileText, AlertCircle, Trash2 } from 'lucide-react';
 import PanelHeader from './PanelHeader';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ConversationPanel from './ConversationPanel';
+import { Button } from './ui/button';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -15,14 +16,25 @@ interface OutputPanelProps {
   messages: Message[];
   onSendMessage: (message: string) => void;
   isLoading: boolean;
+  onClear: () => void;
 }
 
-const OutputPanel = ({ output, error, messages, onSendMessage, isLoading }: OutputPanelProps) => {
+const OutputPanel = ({ output, error, messages, onSendMessage, isLoading, onClear }: OutputPanelProps) => {
   return (
     <div className="panel h-full">
       <PanelHeader 
         title="Output" 
         onCopy={() => output} 
+        actions={
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={onClear}
+            title="Clear output"
+          >
+            <Trash2 size={16} />
+          </Button>
+        }
       />
       
       <Tabs defaultValue="rendered">
