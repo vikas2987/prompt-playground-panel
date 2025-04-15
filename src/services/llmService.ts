@@ -1,4 +1,3 @@
-
 /**
  * Formats a message with header tags
  */
@@ -42,10 +41,11 @@ export const fetchLlmData = async (
       fullPrompt = `${formatMessage('user', renderedPrompt)}\n<|start_header_id|>assistant<|end_header_id|>`;
     }
 
-    const response = await fetch('http://cst-inference-service-staging.staging.svc.cluster.local.k8s-staging-svc.nonprod.paytmdgt.io/model/deepseek-r1/invoke', {
+    const response = await fetch('https://cststaging-gateway.paytm.com/inference/model/deepseek-r1/invoke', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'sso_token_enc_iv': 'your-sso-token-here'
       },
       body: JSON.stringify({
         prompt: fullPrompt,
@@ -60,10 +60,9 @@ export const fetchLlmData = async (
     }
 
     const data = await response.json();
-    return data.response || 'No response received';
+    return data.generation || 'No response received';
   } catch (error) {
     console.error('Error calling LLM API:', error);
     throw error;
   }
 };
-
