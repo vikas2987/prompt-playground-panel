@@ -21,13 +21,26 @@ export const fetchLlmData = async (
   messages: { role: 'user' | 'assistant'; content: string }[]
 ): Promise<string> => {
   try {
-    // Format conversation history including the current query
-    const conversationHistory = formatConversationHistory(messages);
-    const currentQuery = formatMessage('user', renderedPrompt);
-    const assistantWaiting = `<|start_header_id|>assistant<|end_header_id|>`;
-    
-    // Combine all parts into final prompt
-    const fullPrompt = `${conversationHistory}\n${currentQuery}\n${assistantWaiting}`;
+    // Start with the rendered prompt if it's the first message
+    let fullPrompt = renderedPrompt;
+
+    // Add conversation history if there are previous messages
+    if (messages.length > 0) {
+      // Format and add the conversation history
+      const conversationHistory = formatConversationHistory(messages.slice(0, -1));
+      
+      // Add the current query with user tag
+      const currentQuery = formatMessage('user', messages[messages.length - 1].content);
+      
+      // Add assistant waiting tag for the response
+      const assistantWaiting = `<|start_header_id|>assistant<|end_header_id|>`;
+      
+      // Combine all parts
+      fullPrompt = `${renderedPrompt}\n${conversationHistory}\n${currentQuery}\n${assistantWaiting}`;
+    } else {
+      // For first message, just wrap with tags
+      fullPrompt = `${formatMessage('user', renderedPrompt)}\n<|start_header_id|>assistant<|end_header_id|>`;
+    }
 
     const response = await fetch('http://cst-inference-service-staging.staging.svc.cluster.local.k8s-staging-svc.nonprod.paytmdgt.io/model/deepseek-r1/invoke', {
       method: 'POST',
@@ -53,3 +66,4 @@ export const fetchLlmData = async (
     throw error;
   }
 };
+
