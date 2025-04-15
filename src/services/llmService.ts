@@ -12,7 +12,7 @@ export const fetchLlmData = async (prompt: string): Promise<string> => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        prompt: `<｜begin▁of▁sentence｜><｜User｜>${prompt}<｜Assistant｜><think>\n`,
+        prompt: prompt,
         max_gen_len: 5000,
         top_p: 0.3,
         temperature: 0.01
@@ -30,3 +30,4 @@ export const fetchLlmData = async (prompt: string): Promise<string> => {
     throw error;
   }
 };
+
