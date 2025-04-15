@@ -23,7 +23,7 @@ export const sendMessage = async (
   setIsLoading(true);
   
   try {
-    const llmResponse = await fetchLlmData(renderedOutput); // Using the rendered output as prompt
+    const llmResponse = await fetchLlmData(renderedOutput, updatedMessages);
     
     const assistantMessage: Message = { role: 'assistant', content: llmResponse };
     const finalMessages = [...updatedMessages, assistantMessage];
