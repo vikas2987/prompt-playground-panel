@@ -1,8 +1,10 @@
+
 import { MessageSquare, FileText, AlertCircle, Trash2 } from 'lucide-react';
 import PanelHeader from './PanelHeader';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ConversationPanel from './ConversationPanel';
 import { Button } from './ui/button';
+import { type ModelName } from '@/config/modelConfig';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -13,7 +15,7 @@ interface OutputPanelProps {
   output: string;
   error?: string;
   messages: Message[];
-  onSendMessage: (message: string) => void;
+  onSendMessage: (message: string, model: ModelName) => void;
   isLoading: boolean;
   onClear: () => void;
 }
@@ -25,14 +27,7 @@ const OutputPanel = ({
   onSendMessage,
   isLoading,
   onClear
-}: {
-  output: string;
-  error?: string;
-  messages: { role: 'user' | 'assistant'; content: string }[];
-  onSendMessage: (message: string) => void;
-  isLoading: boolean;
-  onClear: () => void;
-}) => {
+}: OutputPanelProps) => {
   return (
     <div className="panel h-full">
       <PanelHeader 
