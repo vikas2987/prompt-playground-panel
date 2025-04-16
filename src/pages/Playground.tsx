@@ -1,4 +1,3 @@
-
 import { Trash2 } from "lucide-react";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import JsonEditor from "@/components/JsonEditor";
 import OutputPanel from "@/components/OutputPanel";
 import { PlaygroundProvider, usePlayground } from "@/contexts/PlaygroundContext";
 import { sendMessage } from "@/services/conversationService";
+import { type ModelName } from "@/config/modelConfig";
 
 const PlaygroundContent = () => {
   const { 
@@ -33,8 +33,8 @@ const PlaygroundContent = () => {
     });
   };
 
-  const handleSendMessage = async (content: string) => {
-    await sendMessage(content, messages, renderedOutput, setMessages, setIsLoading);
+  const handleSendMessage = async (content: string, model: ModelName) => {
+    await sendMessage(content, messages, renderedOutput, setMessages, setIsLoading, model);
   };
 
   return (

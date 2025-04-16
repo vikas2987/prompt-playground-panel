@@ -4,6 +4,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Send, Bot, User, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { AVAILABLE_MODELS, DEFAULT_MODEL, type ModelName } from '@/config/modelConfig';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -11,7 +19,7 @@ interface Message {
 }
 
 interface ConversationPanelProps {
-  onSendMessage: (message: string) => void;
+  onSendMessage: (message: string, model: ModelName) => void;
   messages: Message[];
   isLoading: boolean;
   onClear: () => void;
@@ -19,12 +27,13 @@ interface ConversationPanelProps {
 
 const ConversationPanel = ({ onSendMessage, messages, isLoading, onClear }: ConversationPanelProps) => {
   const [messageInput, setMessageInput] = useState('');
+  const [selectedModel, setSelectedModel] = useState<ModelName>(DEFAULT_MODEL);
   const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (messageInput.trim() && !isLoading) {
-      onSendMessage(messageInput);
+      onSendMessage(messageInput, selectedModel);
       setMessageInput('');
     }
   };
@@ -39,7 +48,21 @@ const ConversationPanel = ({ onSendMessage, messages, isLoading, onClear }: Conv
   return (
     <div className="flex flex-col h-full">
       <div className="flex justify-between items-center p-2 border-b">
-        <span className="text-sm font-medium">Conversation</span>
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium">Conversation</span>
+          <Select
+            value={selectedModel}
+            onValueChange={(value: ModelName) => setSelectedModel(value)}
+          >
+            <SelectTrigger className="w-[240px]">
+              <SelectValue placeholder="Select model" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={AVAILABLE_MODELS.DEEPSEEK}>DeepSeek</SelectItem>
+              <SelectItem value={AVAILABLE_MODELS.LLAMA}>Llama</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
         {messages.length > 0 && (
           <Button
             variant="ghost"

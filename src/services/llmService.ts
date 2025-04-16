@@ -1,5 +1,5 @@
-
 import { getApiDomain } from "../utils/apiConfig";
+import { type ModelName } from "@/config/modelConfig";
 
 /**
  * Formats a message with header tags
@@ -20,7 +20,8 @@ const formatConversationHistory = (messages: { role: 'user' | 'assistant'; conte
  */
 export const fetchLlmData = async (
   renderedPrompt: string,
-  messages: { role: 'user' | 'assistant'; content: string }[]
+  messages: { role: 'user' | 'assistant'; content: string }[],
+  model: ModelName
 ): Promise<string> => {
   try {
     let fullPrompt = renderedPrompt;
@@ -35,7 +36,7 @@ export const fetchLlmData = async (
     }
 
     const apiDomain = getApiDomain();
-    const response = await fetch(`${apiDomain}/inference/model/deepseek-r1/invoke`, {
+    const response = await fetch(`${apiDomain}/inference/model/${model}/invoke`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

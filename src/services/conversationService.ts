@@ -1,20 +1,19 @@
 
 import { fetchLlmData } from "./llmService";
+import { type ModelName } from "@/config/modelConfig";
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
 }
 
-/**
- * Handles sending a message and getting a response
- */
 export const sendMessage = async (
   content: string,
   messages: Message[],
   renderedOutput: string,
   setMessages: (messages: Message[]) => void,
-  setIsLoading: (isLoading: boolean) => void
+  setIsLoading: (isLoading: boolean) => void,
+  model: ModelName
 ) => {
   const userMessage: Message = { role: 'user', content };
   const updatedMessages = [...messages, userMessage];
@@ -23,7 +22,7 @@ export const sendMessage = async (
   setIsLoading(true);
   
   try {
-    const llmResponse = await fetchLlmData(renderedOutput, updatedMessages);
+    const llmResponse = await fetchLlmData(renderedOutput, updatedMessages, model);
     
     const assistantMessage: Message = { role: 'assistant', content: llmResponse };
     const finalMessages = [...updatedMessages, assistantMessage];
@@ -40,4 +39,3 @@ export const sendMessage = async (
     setIsLoading(false);
   }
 };
-
