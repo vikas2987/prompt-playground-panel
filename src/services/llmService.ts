@@ -1,23 +1,15 @@
+
 import { getApiDomain } from "../utils/apiConfig";
 import { type ModelName } from "@/config/modelConfig";
 
-/**
- * Formats a message with header tags
- */
 const formatMessage = (role: 'user' | 'assistant', content: string) => {
   return `<|start_header_id|>${role}<|end_header_id|>${content}<|eot_id|>`;
 };
 
-/**
- * Formats the conversation history into a single prompt
- */
 const formatConversationHistory = (messages: { role: 'user' | 'assistant'; content: string }[]) => {
   return messages.map(msg => formatMessage(msg.role, msg.content)).join('\n');
 };
 
-/**
- * Fetches a response from the custom LLM API
- */
 export const fetchLlmData = async (
   renderedPrompt: string,
   messages: { role: 'user' | 'assistant'; content: string }[],
@@ -31,8 +23,17 @@ export const fetchLlmData = async (
       const currentQuery = formatMessage('user', messages[messages.length - 1].content);
       const assistantWaiting = `<|start_header_id|>assistant<|end_header_id|>`;
       fullPrompt = `${renderedPrompt}\n${conversationHistory}\n${currentQuery}\n${assistantWaiting}`;
+      
+      // Append </think> for deepseek-r1 model only
+      if (model === 'deepseek-r1') {
+        fullPrompt += '</think>';
+      }
     } else {
       fullPrompt = `${formatMessage('user', renderedPrompt)}\n<|start_header_id|>assistant<|end_header_id|>`;
+      // Append </think> for deepseek-r1 model only
+      if (model === 'deepseek-r1') {
+        fullPrompt += '</think>';
+      }
     }
 
     const apiDomain = getApiDomain();
