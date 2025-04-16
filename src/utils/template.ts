@@ -3,7 +3,7 @@ import nunjucks from 'nunjucks';
 
 // Initialize nunjucks with safer configurations
 const env = new nunjucks.Environment(null, {
-  autoescape: true,
+  autoescape: true,  // This might be causing the HTML encoding
   throwOnUndefined: false,
   trimBlocks: true,
   lstripBlocks: true
@@ -11,7 +11,8 @@ const env = new nunjucks.Environment(null, {
 
 // Add custom filters
 env.addFilter('tojson', function(obj) {
-  return JSON.stringify(obj, null, 2);
+  // Return raw JSON string without HTML encoding
+  return new nunjucks.runtime.SafeString(JSON.stringify(obj, null, 2));
 });
 
 /**
