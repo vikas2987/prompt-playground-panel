@@ -2,7 +2,8 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Send, Bot, User } from 'lucide-react';
+import { Send, Bot, User, Trash2 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -13,10 +14,12 @@ interface ConversationPanelProps {
   onSendMessage: (message: string) => void;
   messages: Message[];
   isLoading: boolean;
+  onClear: () => void;
 }
 
-const ConversationPanel = ({ onSendMessage, messages, isLoading }: ConversationPanelProps) => {
+const ConversationPanel = ({ onSendMessage, messages, isLoading, onClear }: ConversationPanelProps) => {
   const [messageInput, setMessageInput] = useState('');
+  const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,8 +29,30 @@ const ConversationPanel = ({ onSendMessage, messages, isLoading }: ConversationP
     }
   };
 
+  const handleClear = () => {
+    onClear();
+    toast({
+      description: "Conversation cleared",
+    });
+  };
+
   return (
     <div className="flex flex-col h-full">
+      <div className="flex justify-between items-center p-2 border-b">
+        <span className="text-sm font-medium">Conversation</span>
+        {messages.length > 0 && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleClear}
+            className="flex items-center gap-2"
+          >
+            <Trash2 size={16} />
+            Clear
+          </Button>
+        )}
+      </div>
+
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.length === 0 ? (
           <div className="text-center text-muted-foreground py-8">

@@ -1,4 +1,3 @@
-
 import { MessageSquare, FileText, AlertCircle, Trash2 } from 'lucide-react';
 import PanelHeader from './PanelHeader';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -19,7 +18,21 @@ interface OutputPanelProps {
   onClear: () => void;
 }
 
-const OutputPanel = ({ output, error, messages, onSendMessage, isLoading, onClear }: OutputPanelProps) => {
+const OutputPanel = ({ 
+  output, 
+  error, 
+  messages,
+  onSendMessage,
+  isLoading,
+  onClear
+}: {
+  output: string;
+  error?: string;
+  messages: { role: 'user' | 'assistant'; content: string }[];
+  onSendMessage: (message: string) => void;
+  isLoading: boolean;
+  onClear: () => void;
+}) => {
   return (
     <div className="panel h-full">
       <PanelHeader 
@@ -73,6 +86,7 @@ const OutputPanel = ({ output, error, messages, onSendMessage, isLoading, onClea
             messages={messages}
             onSendMessage={onSendMessage}
             isLoading={isLoading}
+            onClear={onClear}
           />
         </TabsContent>
       </Tabs>
