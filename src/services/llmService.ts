@@ -1,3 +1,6 @@
+
+import { getApiDomain } from "../utils/apiConfig";
+
 /**
  * Formats a message with header tags
  */
