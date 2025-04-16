@@ -1,8 +1,12 @@
-
 import nunjucks from 'nunjucks';
 
-// Initialize nunjucks
-const env = new nunjucks.Environment();
+// Initialize nunjucks with safer configurations
+const env = new nunjucks.Environment(null, {
+  autoescape: true,
+  throwOnUndefined: false,
+  trimBlocks: true,
+  lstripBlocks: true
+});
 
 /**
  * Renders a template string with the provided context
@@ -11,14 +15,56 @@ const env = new nunjucks.Environment();
  * @returns The rendered template string
  */
 export function renderTemplate(template: string, context: object): string {
+  if (!template.trim()) {
+    return '';
+  }
+  
   try {
-    return env.renderString(template, context);
+    // Pre-process the template to check for unclosed comment blocks
+    const processedTemplate = validateComments(template);
+    return env.renderString(processedTemplate, context);
   } catch (error) {
     if (error instanceof Error) {
       return `Error rendering template: ${error.message}`;
     }
     return 'An unknown error occurred';
   }
+}
+
+/**
+ * Validates and fixes comment blocks in a template
+ * @param template The template string to validate
+ * @returns The processed template string
+ */
+function validateComments(template: string): string {
+  // Check for unclosed comment blocks
+  const commentStart = '{#';
+  const commentEnd = '#}';
+  
+  let result = template;
+  let startIndex = 0;
+  
+  while ((startIndex = result.indexOf(commentStart, startIndex)) !== -1) {
+    const endIndex = result.indexOf(commentEnd, startIndex + commentStart.length);
+    
+    if (endIndex === -1) {
+      // Found an opening comment without a closing tag
+      // Add the closing tag at the end of the line or at the end of the template
+      const lineEndIndex = result.indexOf('\n', startIndex);
+      if (lineEndIndex !== -1) {
+        // Insert comment end before the line end
+        result = result.substring(0, lineEndIndex) + commentEnd + result.substring(lineEndIndex);
+      } else {
+        // Append to the end of template
+        result += commentEnd;
+      }
+    }
+    
+    // Move past this comment
+    startIndex = (endIndex !== -1) ? endIndex + commentEnd.length : result.length;
+  }
+  
+  return result;
 }
 
 /**

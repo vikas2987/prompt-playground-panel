@@ -1,6 +1,6 @@
-
 import { createContext, useState, useContext, ReactNode, useEffect } from "react";
 import { renderTemplate, validateJSON } from "@/utils/template";
+import { useToast } from "@/hooks/use-toast";
 
 interface Message {
   role: 'user' | 'assistant';
@@ -65,6 +65,7 @@ export const PlaygroundProvider = ({ children }: { children: ReactNode }) => {
   const [jsonError, setJsonError] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     try {
@@ -76,8 +77,19 @@ export const PlaygroundProvider = ({ children }: { children: ReactNode }) => {
       }
       
       setJsonError(null);
+      
       const rendered = renderTemplate(template, result.data);
-      setRenderedOutput(rendered);
+      
+      if (rendered.startsWith('Error rendering template:')) {
+        setJsonError(rendered);
+        toast({
+          title: "Template Error",
+          description: rendered,
+          variant: "destructive"
+        });
+      } else {
+        setRenderedOutput(rendered);
+      }
     } catch (error) {
       if (error instanceof Error) {
         setJsonError(error.message);
@@ -85,7 +97,7 @@ export const PlaygroundProvider = ({ children }: { children: ReactNode }) => {
         setJsonError('An unknown error occurred');
       }
     }
-  }, [template, jsonInput]);
+  }, [template, jsonInput, toast]);
 
   const clearAll = () => {
     setTemplate("");
