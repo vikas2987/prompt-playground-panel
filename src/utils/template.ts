@@ -1,3 +1,4 @@
+
 import nunjucks from 'nunjucks';
 
 // Initialize nunjucks with safer configurations
@@ -6,6 +7,11 @@ const env = new nunjucks.Environment(null, {
   throwOnUndefined: false,
   trimBlocks: true,
   lstripBlocks: true
+});
+
+// Add custom filters
+env.addFilter('tojson', function(obj) {
+  return JSON.stringify(obj, null, 2);
 });
 
 /**
