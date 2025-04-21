@@ -1,3 +1,4 @@
+
 import { createContext, useState, useContext, ReactNode, useEffect } from "react";
 import { renderTemplate, validateJSON } from "@/utils/template";
 import { useToast } from "@/hooks/use-toast";
@@ -5,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 interface Message {
   role: 'user' | 'assistant';
   content: string;
+  isJson?: boolean;
 }
 
 interface PlaygroundContextType {

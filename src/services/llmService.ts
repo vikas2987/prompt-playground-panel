@@ -13,16 +13,24 @@ const formatConversationHistory = (messages: { role: 'user' | 'assistant'; conte
 export const fetchLlmData = async (
   renderedPrompt: string,
   messages: { role: 'user' | 'assistant'; content: string }[],
-  model: ModelName
+  model: ModelName,
+  formattedUserInput?: string
 ): Promise<string> => {
   try {
     let fullPrompt = renderedPrompt;
 
     if (messages.length > 0) {
-      const conversationHistory = formatConversationHistory(messages.slice(0, -1));
-      const currentQuery = formatMessage('user', messages[messages.length - 1].content);
-      const assistantWaiting = `<|start_header_id|>assistant<|end_header_id|>`;
-      fullPrompt = `${renderedPrompt}\n${conversationHistory}\n${currentQuery}\n${assistantWaiting}`;
+      // If we're using a pre-formatted user input, handle differently
+      if (formattedUserInput) {
+        const conversationHistory = formatConversationHistory(messages.slice(0, -1));
+        const assistantWaiting = `<|start_header_id|>assistant<|end_header_id|>`;
+        fullPrompt = `${renderedPrompt}\n${conversationHistory}\n${formattedUserInput}\n${assistantWaiting}`;
+      } else {
+        const conversationHistory = formatConversationHistory(messages.slice(0, -1));
+        const currentQuery = formatMessage('user', messages[messages.length - 1].content);
+        const assistantWaiting = `<|start_header_id|>assistant<|end_header_id|>`;
+        fullPrompt = `${renderedPrompt}\n${conversationHistory}\n${currentQuery}\n${assistantWaiting}`;
+      }
       
       // Append </think> for deepseek-r1 model only
       if (model === 'deepseek-r1') {

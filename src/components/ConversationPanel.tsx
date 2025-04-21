@@ -1,7 +1,8 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Send, Bot, User, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -16,6 +17,7 @@ import { AVAILABLE_MODELS, DEFAULT_MODEL, type ModelName } from '@/config/modelC
 interface Message {
   role: 'user' | 'assistant';
   content: string;
+  isJson?: boolean;
 }
 
 interface ConversationPanelProps {
@@ -27,8 +29,13 @@ interface ConversationPanelProps {
 
 const ConversationPanel = ({ onSendMessage, messages, isLoading, onClear }: ConversationPanelProps) => {
   const [messageInput, setMessageInput] = useState('');
+  const [jsonResponseInput, setJsonResponseInput] = useState('');
   const [selectedModel, setSelectedModel] = useState<ModelName>(DEFAULT_MODEL);
   const { toast } = useToast();
+
+  // Check if the last message is a JSON response from the assistant
+  const lastMessage = messages.length > 0 ? messages[messages.length - 1] : null;
+  const isLastMessageJsonResponse = lastMessage?.role === 'assistant' && lastMessage?.isJson;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,11 +45,36 @@ const ConversationPanel = ({ onSendMessage, messages, isLoading, onClear }: Conv
     }
   };
 
+  const handleJsonResponseSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (jsonResponseInput.trim() && !isLoading) {
+      const formattedInput = `<|start_header_id|>user<|end_header_id|>\n${jsonResponseInput}\n<|eot_id|>`;
+      onSendMessage(formattedInput, selectedModel);
+      setJsonResponseInput('');
+    }
+  };
+
   const handleClear = () => {
     onClear();
     toast({
       description: "Conversation cleared",
     });
+  };
+
+  // Helper function to try to pretty print JSON
+  const formatJsonContent = (content: string) => {
+    try {
+      // Check if the content is a JSON string
+      const jsonObj = JSON.parse(content);
+      return (
+        <pre className="whitespace-pre-wrap overflow-x-auto bg-muted/50 p-2 rounded">
+          {JSON.stringify(jsonObj, null, 2)}
+        </pre>
+      );
+    } catch (e) {
+      // Return the content as is if it's not valid JSON
+      return <div className="whitespace-pre-wrap">{content}</div>;
+    }
   };
 
   return (
@@ -103,7 +135,7 @@ const ConversationPanel = ({ onSendMessage, messages, isLoading, onClear }: Conv
                     <Bot size={18} />
                   )}
                 </div>
-                <div className="whitespace-pre-wrap">{message.content}</div>
+                {message.isJson ? formatJsonContent(message.content) : <div className="whitespace-pre-wrap">{message.content}</div>}
               </div>
             </div>
           ))
@@ -120,19 +152,35 @@ const ConversationPanel = ({ onSendMessage, messages, isLoading, onClear }: Conv
         )}
       </div>
 
-      <form onSubmit={handleSubmit} className="border-t p-3">
-        <div className="flex gap-2">
-          <Input
-            placeholder="Type a message..."
-            value={messageInput}
-            onChange={(e) => setMessageInput(e.target.value)}
-            disabled={isLoading}
-          />
-          <Button type="submit" disabled={isLoading || !messageInput.trim()}>
-            <Send size={18} />
-          </Button>
-        </div>
-      </form>
+      {isLastMessageJsonResponse && !isLoading ? (
+        <form onSubmit={handleJsonResponseSubmit} className="border-t p-3">
+          <div className="space-y-2">
+            <Textarea
+              placeholder="Enter your response to the JSON data..."
+              value={jsonResponseInput}
+              onChange={(e) => setJsonResponseInput(e.target.value)}
+              className="min-h-[100px]"
+            />
+            <Button type="submit" className="w-full" disabled={!jsonResponseInput.trim()}>
+              Submit Response
+            </Button>
+          </div>
+        </form>
+      ) : (
+        <form onSubmit={handleSubmit} className="border-t p-3">
+          <div className="flex gap-2">
+            <Input
+              placeholder="Type a message..."
+              value={messageInput}
+              onChange={(e) => setMessageInput(e.target.value)}
+              disabled={isLoading}
+            />
+            <Button type="submit" disabled={isLoading || !messageInput.trim()}>
+              <Send size={18} />
+            </Button>
+          </div>
+        </form>
+      )}
     </div>
   );
 };

@@ -5,7 +5,18 @@ import { type ModelName } from "@/config/modelConfig";
 interface Message {
   role: 'user' | 'assistant';
   content: string;
+  isJson?: boolean;
 }
+
+// Helper function to check if string is valid JSON
+const isJsonString = (str: string): boolean => {
+  try {
+    const json = JSON.parse(str);
+    return typeof json === 'object' && json !== null;
+  } catch (e) {
+    return false;
+  }
+};
 
 export const sendMessage = async (
   content: string,
@@ -15,16 +26,30 @@ export const sendMessage = async (
   setIsLoading: (isLoading: boolean) => void,
   model: ModelName
 ) => {
-  const userMessage: Message = { role: 'user', content };
+  // Check if this is a formatted message (from JSON response workflow)
+  const isFormattedInput = content.startsWith('<|start_header_id|>user<|end_header_id|>');
+  
+  const userMessage: Message = { 
+    role: 'user', 
+    content: isFormattedInput ? content.split('\n')[1] : content // Extract clean content for display
+  };
+  
   const updatedMessages = [...messages, userMessage];
   setMessages(updatedMessages);
   
   setIsLoading(true);
   
   try {
-    const llmResponse = await fetchLlmData(renderedOutput, updatedMessages, model);
+    const llmResponse = await fetchLlmData(renderedOutput, updatedMessages, model, isFormattedInput ? content : undefined);
     
-    const assistantMessage: Message = { role: 'assistant', content: llmResponse };
+    // Detect if response is JSON
+    const isJson = isJsonString(llmResponse);
+    
+    const assistantMessage: Message = { 
+      role: 'assistant', 
+      content: llmResponse,
+      isJson 
+    };
     const finalMessages = [...updatedMessages, assistantMessage];
     setMessages(finalMessages);
     setIsLoading(false);
